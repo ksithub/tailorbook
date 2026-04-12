@@ -1,0 +1,3 @@
+{
+  "/(dashboard)/fabric/page": "app/(dashboard)/fabric/page.js"
+}

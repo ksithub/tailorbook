@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(dashboard)/layout,_N_T_/(dashboard)/settings/layout,_N_T_/(dashboard)/settings/measurement-templates/layout,_N_T_/(dashboard)/settings/measurement-templates/page,_N_T_/settings/measurement-templates"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/!KGRhc2hib2FyZCk/settings/measurement-templates/__PAGE__",
+    "/!KGRhc2hib2FyZCk/settings/measurement-templates",
+    "/!KGRhc2hib2FyZCk/settings",
+    "/!KGRhc2hib2FyZCk",
+    "/_index",
+    "/_head"
+  ]
+}

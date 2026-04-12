@@ -1,0 +1,107 @@
+{
+  "app": {
+    "[project]/app/(auth)/login/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(auth)/register/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/alterations/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/billing/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/customers/[id]/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/customers/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/dashboard/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/delivery/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/designs/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/fabric/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/jobs/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/kanban/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/measurements/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/orders/[id]/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/orders/new/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/orders/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/payments/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/reports/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/settings/measurement-templates/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/settings/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/tailors/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/udhar/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/_not-found/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/portal/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pages": {},
+  "pagesUsingSizeAdjust": false
+}

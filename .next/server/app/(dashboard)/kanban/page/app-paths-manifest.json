@@ -1,0 +1,3 @@
+{
+  "/(dashboard)/kanban/page": "app/(dashboard)/kanban/page.js"
+}
