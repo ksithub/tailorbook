@@ -13,7 +13,8 @@
   --gold-soft: rgba(184, 114, 40, 0.09);
   --text: #1c1814;
   --text2: #5a5348;
-  --text3: #8a8174;
+  /* --text3: #8a8174; */
+  --text3: #000000;
   /* --on-gold: #0f0d0b; */
   --on-gold: #fff;
   --color-red: #c43d3d;
@@ -33,7 +34,8 @@
   --gold-soft: rgba(232, 168, 74, 0.08);
   --text: #f0e6d8;
   --text2: #9a8e7e;
-  --text3: #5a5040;
+  /* --text3: #5a5040; */
+  --text3: #f0e6d8;
    --on-gold: #0f0d0b;  
   --color-red: #e05555;
   --color-green: #5cba7d;

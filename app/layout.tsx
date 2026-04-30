@@ -16,7 +16,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "TailorBook",
+  title: "Tailor Book",
   description: "Smart tailor management for Indian shops",
 };
 

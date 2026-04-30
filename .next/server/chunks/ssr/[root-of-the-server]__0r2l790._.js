@@ -6,6 +6,6 @@ module.exports=[92507,a=>{a.v({className:"dm_sans_b1fa08b3-module__MvpxlG__class
     else document.documentElement.classList.remove("dark");
   } catch (e) {}
 })();
-`;a.s(["default",0,function({children:a}){return(0,b.jsx)("html",{lang:"en",suppressHydrationWarning:!0,children:(0,b.jsxs)("body",{className:`${d.variable} ${f.variable} min-h-screen antialiased`,style:{fontFamily:"var(--font-dm-sans), sans-serif",background:"var(--bg)",color:"var(--text)"},children:[(0,b.jsx)("script",{dangerouslySetInnerHTML:{__html:h}}),(0,b.jsx)(g.Providers,{children:a})]})})},"metadata",0,{title:"TailorBook",description:"Smart tailor management for Indian shops"}],33290)},70864,a=>{a.n(a.i(33290))}];
+`;a.s(["default",0,function({children:a}){return(0,b.jsx)("html",{lang:"en",suppressHydrationWarning:!0,children:(0,b.jsxs)("body",{className:`${d.variable} ${f.variable} min-h-screen antialiased`,style:{fontFamily:"var(--font-dm-sans), sans-serif",background:"var(--bg)",color:"var(--text)"},children:[(0,b.jsx)("script",{dangerouslySetInnerHTML:{__html:h}}),(0,b.jsx)(g.Providers,{children:a})]})})},"metadata",0,{title:"Tailor Book",description:"Smart tailor management for Indian shops"}],33290)},70864,a=>{a.n(a.i(33290))}];
 
 //# sourceMappingURL=%5Broot-of-the-server%5D__0r2l790._.js.map

@@ -95,20 +95,22 @@ export function StyledTextarea({ className, ...props }: TextAreaProps) {
 type BtnProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "ghost" | "danger";
   loading?: boolean;
+  padding?: string;
 };
 
-export function StyledButton({ variant = "primary", loading, children, disabled, ...props }: BtnProps) {
+export function StyledButton({ variant = "primary", loading, children, disabled, padding = "0.5rem 1rem", ...props }: BtnProps) {
   const styles: Record<string, React.CSSProperties> = {
     primary: { background: "var(--gold)", color: "var(--on-gold)" },
     ghost: { background: "var(--surface2)", color: "var(--text2)", border: "1px solid var(--border)" },
     danger: { background: "rgba(224,85,85,0.15)", color: "var(--color-red)", border: "1px solid rgba(224,85,85,0.3)" },
+    padding: { padding: padding },
   };
   return (
     <button
       {...props}
       disabled={disabled || loading}
-      className="flex items-center justify-center gap-1.5 rounded-lg px-4 py-2 text-[12px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
-      style={styles[variant]}
+      className={`flex items-center justify-center gap-1.5 rounded-lg px-3 text-[12px] font-semibold transition-opacity hover:opacity-90 disabled:opacity-50 ${padding}`}
+      style={{ ...styles[variant], ...styles.padding }}
     >
       {loading ? "Loading…" : children}
     </button>

@@ -74,6 +74,126 @@
         "x-next-revalidate-tag-token"
       ]
     },
+    "/accounts/ledger": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/accounts/ledger",
+      "dataRoute": "/accounts/ledger.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/accounts/outstanding": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/accounts/outstanding",
+      "dataRoute": "/accounts/outstanding.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/accounts/payments": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/accounts/payments",
+      "dataRoute": "/accounts/payments.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/accounts/receipts": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/accounts/receipts",
+      "dataRoute": "/accounts/receipts.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/accounts/transaction-book": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/accounts/transaction-book",
+      "dataRoute": "/accounts/transaction-book.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/alterations": {
       "experimentalBypassFor": [
         {
@@ -271,7 +391,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/jobs": {
+    "/jobs-card": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -284,8 +404,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/jobs",
-      "dataRoute": "/jobs.rsc",
+      "srcRoute": "/jobs-card",
+      "dataRoute": "/jobs-card.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -611,8 +731,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "a3c9281a4bb35c8df36310c083c84841",
-    "previewModeSigningKey": "ff1e34e8afa406001572309831efc237f92019e04945a1971090caa3705b88c3",
-    "previewModeEncryptionKey": "89f773a3055e65fcabf4a4710cf2e4bf28b1668d16def285ffaece95b96de66f"
+    "previewModeId": "7224ab6613b23daeb6c39e2fb8d6be34",
+    "previewModeSigningKey": "7f6568b85ccc02ba08b4c74f4301ea0813e3e9c832d4ba580dc8f685545d1e10",
+    "previewModeEncryptionKey": "8cdedfe6affc69f45737dcee0143213357c398384db179abdb3d58a186d04515"
   }
 }

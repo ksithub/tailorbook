@@ -10,27 +10,32 @@ import { useEffect, useState } from "react";
 
 function getPageTitle(pathname: string): { title: string; subtitle: string } {
   const map: Record<string, { title: string; subtitle: string }> = {
-    "/dashboard": { title: "Dashboard", subtitle: "Overview of your shop" },
+    "/dashboard": { title: "Dashboard", subtitle: "Overview of shop" },
     "/orders": { title: "Orders", subtitle: "Manage bookings & status" },
-    "/orders/new": { title: "New Order", subtitle: "Book a new garment order" },
+    "/orders/new": { title: "New Order", subtitle: "Book a new order" },
     "/customers": { title: "Customers", subtitle: "Customer profiles & measurements" },
     "/measurements": { title: "Measurements", subtitle: "Templates & recorded sizes" },
-    "/kanban": { title: "Kanban Board", subtitle: "Production workflow" },
+    "/jobs-card": { title: "Jobs Card", subtitle: "Job cards & production tracking" },
+    "/kanban": { title: "Production Board", subtitle: "Production workflow" },
     "/tailors": { title: "Tailors", subtitle: "Staff & workload" },
-    "/jobs": { title: "Job Cards", subtitle: "Work assignment queue" },
     "/alterations": { title: "Alterations", subtitle: "Alteration requests" },
     "/billing": { title: "Billing & GST", subtitle: "Invoices & tax" },
     "/payments": { title: "Payments", subtitle: "Daily collections" },
-    "/udhar": { title: "Udhar Khata", subtitle: "Credit ledger" },
+    "/udhar": { title: "Credit Ledger (Legacy)", subtitle: "Superseded by Account Ledger" },
     "/designs": { title: "Design Catalog", subtitle: "Saved design references" },
     "/fabric": { title: "Fabric Stock", subtitle: "Inventory tracking" },
     "/reports": { title: "Reports", subtitle: "Analytics & summaries" },
     "/delivery": { title: "Delivery", subtitle: "Pending & overdue deliveries" },
     "/settings": { title: "Settings", subtitle: "Company & configuration" },
+    "/accounts/ledger": { title: "Account Ledger", subtitle: "Dr / Cr entries by account or customer" },
+    "/accounts/receipts": { title: "Receipt Book", subtitle: "Inward receipts" },
+    "/accounts/payments": { title: "Payment Book", subtitle: "Payments & refunds" },
+    "/accounts/transaction-book": { title: "Transaction Book", subtitle: "Cash & bank books with running balance" },
+    "/accounts/outstanding": { title: "Outstanding", subtitle: "Customer-wise receivable balances" },
   };
   const base = "/" + (pathname.split("/")[1] ?? "");
   const segment = "/" + pathname.split("/").slice(1, 3).join("/");
-  return map[segment] ?? map[base] ?? { title: "TailorBook", subtitle: "" };
+  return map[segment] ?? map[base] ?? { title: "Tailor Book", subtitle: "" };
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -82,7 +87,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* User + Logout */}
         <div className="px-3 pb-4 pt-3" style={{ borderTop: "1px solid var(--border)" }}>
-          <ThemeToggle className="mb-3" />
+          
           <div className="mb-2 flex items-center gap-2">
             <div
               className="flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-semibold"
@@ -110,6 +115,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <LogOut size={11} />
             Sign out
           </button>
+          <ThemeToggle className="mt-3 mb-3" />
         </div>
       </aside>
 

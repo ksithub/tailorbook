@@ -5,16 +5,20 @@ import {
   Ruler,
   Trello,
   Scissors,
-  ClipboardList,
   RefreshCw,
   Receipt,
   CreditCard,
-  BookOpen,
   Palette,
   Package,
   BarChart2,
   Truck,
   Settings,
+  BookMarked,
+  ArrowDownLeft,
+  ArrowUpRight,
+  Wallet,
+  AlertCircle,
+  Briefcase,
   type LucideIcon,
 } from "lucide-react";
 
@@ -43,27 +47,39 @@ export const navSections: NavSection[] = [
   {
     section: "Production",
     items: [
-      { label: "Kanban Board", href: "/kanban", icon: Trello },
-      { label: "Tailors", href: "/tailors", icon: Scissors },
-      { label: "Job Cards", href: "/jobs", icon: ClipboardList },
-      { label: "Alterations", href: "/alterations", icon: RefreshCw },
+      { label: "Production Board", href: "/kanban", icon: Trello },
+      { label: "Jobs Card", href: "/jobs-card", icon: Briefcase },
+      { label: "Delivery", href: "/delivery", icon: Truck },
+
+      /* { label: "Alterations", href: "/alterations", icon: RefreshCw }, */
     ],
   },
-  {
+  /* {
     section: "Finance",
     items: [
       { label: "Billing & GST", href: "/billing", icon: Receipt },
       { label: "Payments", href: "/payments", icon: CreditCard },
-      { label: "Udhar Khata", href: "/udhar", icon: BookOpen },
+    ],
+  }, */
+  {
+    section: "Accounts",
+    items: [
+      
+      { label: "Receipt Book", href: "/accounts/receipts", icon: ArrowDownLeft },
+      { label: "Payment Book", href: "/accounts/payments", icon: ArrowUpRight },
+      { label: "Account Ledger", href: "/accounts/ledger", icon: BookMarked },
+      { label: "Transaction Book", href: "/accounts/transaction-book", icon: Wallet },
+      /* { label: "Outstanding", href: "/accounts/outstanding", icon: AlertCircle }, */
     ],
   },
   {
     section: "Settings",
     items: [
       { label: "Design Catalog", href: "/designs", icon: Palette },
-      { label: "Fabric Stock", href: "/fabric", icon: Package },
-      { label: "Reports", href: "/reports", icon: BarChart2 },
-      { label: "Delivery", href: "/delivery", icon: Truck },
+      { label: "Tailors", href: "/tailors", icon: Scissors },
+      /* { label: "Fabric Stock", href: "/fabric", icon: Package }, */
+      /* { label: "Reports", href: "/reports", icon: BarChart2 }, */
+      
       { label: "Settings", href: "/settings", icon: Settings },
     ],
   },

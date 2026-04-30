@@ -37,6 +37,14 @@
         "nxtPid": "nxtPid"
       },
       "namedRegex": "^/orders/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/orders/[id]/edit",
+      "regex": "^/orders/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/orders/(?<nxtPid>[^/]+?)/edit(?:/)?$"
     }
   ],
   "staticRoutes": [
@@ -57,6 +65,36 @@
       "regex": "^/_not\\-found(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/accounts/ledger",
+      "regex": "^/accounts/ledger(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/accounts/ledger(?:/)?$"
+    },
+    {
+      "page": "/accounts/outstanding",
+      "regex": "^/accounts/outstanding(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/accounts/outstanding(?:/)?$"
+    },
+    {
+      "page": "/accounts/payments",
+      "regex": "^/accounts/payments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/accounts/payments(?:/)?$"
+    },
+    {
+      "page": "/accounts/receipts",
+      "regex": "^/accounts/receipts(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/accounts/receipts(?:/)?$"
+    },
+    {
+      "page": "/accounts/transaction-book",
+      "regex": "^/accounts/transaction\\-book(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/accounts/transaction\\-book(?:/)?$"
     },
     {
       "page": "/alterations",
@@ -107,10 +145,10 @@
       "namedRegex": "^/favicon\\.ico(?:/)?$"
     },
     {
-      "page": "/jobs",
-      "regex": "^/jobs(?:/)?$",
+      "page": "/jobs-card",
+      "regex": "^/jobs\\-card(?:/)?$",
       "routeKeys": {},
-      "namedRegex": "^/jobs(?:/)?$"
+      "namedRegex": "^/jobs\\-card(?:/)?$"
     },
     {
       "page": "/kanban",

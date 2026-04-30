@@ -12,5 +12,6 @@ export function formatInr(amount: number) {
   const other = intPart.slice(0, -3);
   const withCommas = other.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + (other ? "," : "") + lastThree;
   const sign = amount < 0 ? "-" : "";
-  return `₹${sign}${withCommas}.${frac}`;
+  /* return `₹${sign}${withCommas}.${frac}`; */
+  return `${sign}${withCommas}.${frac}`;
 }

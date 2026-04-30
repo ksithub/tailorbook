@@ -7,16 +7,13 @@ import {
   AlertCircle,
   BookOpen,
   CheckCircle,
-  ClipboardList,
   CreditCard,
   Loader2,
   Package,
-  Ruler,
   ShoppingBag,
-  Truck,
-  Users,
 } from "lucide-react";
 import Link from "next/link";
+import { useMemo } from "react";
 
 /* ─── Types ─────────────────────────────────────────────────────────────── */
 type DashboardDto = {
@@ -31,6 +28,7 @@ type OrderListDto = {
   id: string;
   tokenNo: string;
   customerName: string;
+  customerPhone: string;
   deliveryDate: string;
   status: string;
   balanceAmount: number;
@@ -56,7 +54,27 @@ type TailorDto = {
   isActive: boolean;
 };
 
+type TailorWorkloadDto = {
+  tailorId: string;
+  activeOrderCount: number;
+  activeItemQty: number;
+};
+
 /* ─── Helpers ───────────────────────────────────────────────────────────── */
+const STAT_LINKS: Record<string, string> = {
+  "Today's Orders": "/orders",
+  "Pending Delivery": "/delivery",
+};
+
+function isoDate(d: Date) {
+  // yyyy-mm-dd for query params and <input type="date">
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function monthStartIso(d: Date) {
+  return isoDate(new Date(d.getFullYear(), d.getMonth(), 1));
+}
+
 const STATUS_LABELS: Record<string, string> = {
   Booked: "Booked",
   Cutting: "Cutting",
@@ -108,7 +126,7 @@ function BalancePill({ balance }: { balance: number }) {
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[1.5px]" style={{ color: "var(--text3)" }}>
+    <h2 className="mb-3 px-2 text-[11px] font-semibold uppercase tracking-[1.5px]" style={{ color: "var(--text3)" }}>
       {children}
     </h2>
   );
@@ -125,15 +143,6 @@ function Widget({ children, className }: { children: React.ReactNode; className?
   );
 }
 
-/* ─── Quick Actions ─────────────────────────────────────────────────────── */
-const QUICK_ACTIONS = [
-  { label: "Take Measurement", icon: Ruler, href: "/measurements", color: "var(--gold)" },
-  { label: "Book Order", icon: ShoppingBag, href: "/orders/new", color: "var(--color-green)" },
-  { label: "Record Payment", icon: CreditCard, href: "/payments", color: "var(--color-blue)" },
-  { label: "Mark Delivered", icon: Truck, href: "/delivery", color: "var(--color-teal)" },
-  { label: "Assign Tailor", icon: ClipboardList, href: "/jobs", color: "var(--color-purple)" },
-];
-
 /* ─── Main component ────────────────────────────────────────────────────── */
 export default function DashboardPage() {
   const { data: stats, isLoading: statsLoading } = useQuery<DashboardDto>({
@@ -149,7 +158,7 @@ export default function DashboardPage() {
 
   const { data: recentOrdersData } = useQuery({
     queryKey: ["orders-recent"],
-    queryFn: async () => (await api.get("/api/orders?pageSize=10")).data as { items: OrderListDto[] },
+    queryFn: async () => (await api.get("/api/orders?pageSize=5")).data as { items: OrderListDto[] },
     staleTime: 30_000,
   });
 
@@ -158,14 +167,20 @@ export default function DashboardPage() {
     queryFn: async () => (await api.get("/api/tailors")).data,
     staleTime: 60_000,
   });
-
+debugger;
+  const { data: tailorWorkload } = useQuery<TailorWorkloadDto[]>({
+    queryKey: ["tailor-workload"],
+    queryFn: async () => (await api.get("/api/tailors/workload")).data,
+    staleTime: 30_000,
+  });
+debugger;
   const { data: udharList } = useQuery<CustomerDto[]>({
     queryKey: ["udhar-list"],
     queryFn: async () => (await api.get("/api/udhar")).data,
     staleTime: 30_000,
   });
 
-  const recentOrders = recentOrdersData?.items ?? [];
+  const recentOrders = (recentOrdersData?.items ?? []).slice(0, 5);
 
   /* Kanban column order */
   const kanbanOrder = ["Booked", "Cutting", "Stitching", "Trial", "Alteration", "Ready"];
@@ -176,6 +191,19 @@ export default function DashboardPage() {
 
   /* Tailor workload: compute rough pending from kanban */
   const activeTailors = (tailors ?? []).filter((t) => t.isActive).slice(0, 5);
+  const workloadMap = useMemo(() => {
+    const m = new Map<string, TailorWorkloadDto>();
+    for (const w of tailorWorkload ?? []) m.set(w.tailorId, w);
+    return m;
+  }, [tailorWorkload]);
+  const maxOrders = useMemo(() => {
+    let max = 0;
+    for (const t of activeTailors) {
+      const w = workloadMap.get(t.id);
+      max = Math.max(max, w?.activeOrderCount ?? 0);
+    }
+    return Math.max(1, max);
+  }, [activeTailors, workloadMap]);
 
   /* Udhar top 5 */
   const top5Udhar = (udharList ?? []).slice(0, 5);
@@ -209,58 +237,113 @@ export default function DashboardPage() {
           color: "var(--color-green)",
         },
         {
-          label: "Udhar Outstanding",
+          label: "Orders Outstanding",
           value: formatInr(stats.udharBalanceSum),
           icon: BookOpen,
-          sub: "Total credit balance",
+          sub: "Total outstanding orders",
           color: "var(--color-red)",
         },
       ];
 
+  const statHref = (label: string) => {
+    const now = new Date();
+    const today = isoDate(now);
+    if (label === "Today's Revenue") {
+      return `/accounts/transaction-book?type=cash&from=${today}&to=${today}`;
+    }
+    if (label === "Orders Outstanding") {
+      const from = monthStartIso(now);
+      return `/orders?status=All&from=${from}&to=${today}`;
+    }
+    return STAT_LINKS[label];
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Quick Actions */}
-      <div>
-        <SectionTitle>Quick Actions</SectionTitle>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
-          {QUICK_ACTIONS.map((a) => {
-            const Icon = a.icon;
+    <div className="space-y-4">
+
+       {/* Kanban Preview */}
+       <div>
+        <div className="mb-0 flex items-center justify-between">
+          <SectionTitle>Production Pipeline</SectionTitle>
+          <Link href="/kanban" className="text-[11px] transition-colors" style={{ color: "var(--gold)" }}>
+            View board →
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
+          {kanbanCols.map((col) => {
+            const colColor = STATUS_COLORS[col.status] ?? "var(--text3)";
             return (
-              <Link
-                key={a.href}
-                href={a.href}
-                className="flex flex-col items-center gap-2 rounded-xl border p-3 text-center text-[11px] font-medium transition-all duration-150 hover:scale-[1.02]"
-                style={{
-                  background: "var(--surface)",
-                  borderColor: "var(--border)",
-                  color: "var(--text2)",
-                }}
-                onMouseEnter={(e) => {
-                  const el = e.currentTarget as HTMLElement;
-                  el.style.borderColor = a.color;
-                  el.style.color = a.color;
-                }}
-                onMouseLeave={(e) => {
-                  const el = e.currentTarget as HTMLElement;
-                  el.style.borderColor = "var(--border)";
-                  el.style.color = "var(--text2)";
-                }}
-              >
-                <div
-                  className="flex h-8 w-8 items-center justify-center rounded-lg"
-                  style={{ background: `${a.color}1a`, color: a.color }}
-                >
-                  <Icon size={15} />
+              <Widget key={col.status} className="px-2 py-2 min-h-[80px]">
+                <div className="mb-2 flex items-center justify-between">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: colColor }}>
+                    {col.status}
+                  </p>
+                  <span
+                    className="rounded-full px-1.5 py-0.5 text-[9px] font-bold"
+                    style={{ background: `${colColor}22`, color: colColor }}
+                  >
+                    {col.orders.length}
+                  </span>
                 </div>
-                {a.label}
-              </Link>
+                <div className="space-y-1.5">
+                  {col.orders.slice(0, 3).map((o) => {
+                    const isUrgent = o.priority === "Urgent" || o.priority === "Express";
+                    const dueLabel = new Date(o.deliveryDate).toLocaleDateString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                    });
+                    return (
+                      <Link
+                        key={o.id}
+                        href={`/orders/${o.id}`}
+                        className="block rounded-md border-l-2 px-2 py-1 transition-colors"
+                        style={{
+                          background: "var(--surface2)",
+                          borderLeftColor: isUrgent ? "var(--color-red)" : "var(--border)",
+                        }}
+                        onMouseEnter={(e) => {
+                          (e.currentTarget as HTMLElement).style.background = "var(--gold-soft)";
+                        }}
+                        onMouseLeave={(e) => {
+                          (e.currentTarget as HTMLElement).style.background = "var(--surface2)";
+                        }}
+                        aria-label={`Open order #${o.tokenNo}`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="truncate text-[10px] font-semibold leading-tight" style={{ color: "var(--text)" }}>
+                              #{o.tokenNo} <span style={{ color: "var(--text3)", fontWeight: 500 }}>· {dueLabel}</span>
+                            </p>
+                            <p className="truncate text-[10px] font-medium leading-tight" style={{ color: "var(--text2)" }}>
+                              {o.customerName} - {o.customerPhone}
+                            </p>
+                          </div>
+                          <div className="shrink-0 text-right">
+                            <p className="text-[9px] font-semibold" style={{ color: o.balanceAmount > 0 ? "var(--color-red)" : "var(--color-green)" }}>
+                              {o.balanceAmount > 0 ? formatInr(o.balanceAmount) : "Paid"}
+                            </p>
+                           {/*  <p className="text-[8px] leading-none" style={{ color: "var(--text3)" }}>
+                              Balance
+                            </p> */}
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                  {col.orders.length > 3 && (
+                    <p className="text-[9px]" style={{ color: "var(--text3)" }}>
+                      +{col.orders.length - 3} more
+                    </p>
+                  )}
+                </div>
+              </Widget>
             );
           })}
         </div>
       </div>
 
-      {/* Stat Cards */}
-      <div>
+{/* Stat Cards */}
+<div>
         <SectionTitle>Overview</SectionTitle>
         {statsLoading ? (
           <div className="flex items-center gap-2 py-4" style={{ color: "var(--text3)" }}>
@@ -271,8 +354,12 @@ export default function DashboardPage() {
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {statCards?.map((s) => {
               const Icon = s.icon;
-              return (
-                <Widget key={s.label} className="flex flex-col gap-1">
+              const href = statHref(s.label);
+              const CardInner = (
+                <Widget
+                  key={s.label}
+                  className={`flex flex-col gap-1 px-4 py-2 ${href ? "cursor-pointer transition-colors" : ""}`}
+                >
                   <div className="flex items-start justify-between">
                     <p className="text-[11px]" style={{ color: "var(--text2)" }}>
                       {s.label}
@@ -292,79 +379,43 @@ export default function DashboardPage() {
                   </p>
                 </Widget>
               );
+              return (
+                href ? (
+                  <Link
+                    key={s.label}
+                    href={href}
+                    className="block rounded-xl focus:outline-none focus:ring-2"
+                    style={{ outlineColor: "var(--gold)" }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget.firstChild as HTMLElement).style.borderColor = "var(--gold)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget.firstChild as HTMLElement).style.borderColor = "var(--border)";
+                    }}
+                    aria-label={`Open ${s.label}`}
+                  >
+                    {CardInner}
+                  </Link>
+                ) : (
+                  CardInner
+                )
+              );
             })}
           </div>
         )}
       </div>
 
-      {/* Kanban Preview */}
-      <div>
-        <div className="mb-3 flex items-center justify-between">
-          <SectionTitle>Production Pipeline</SectionTitle>
-          <Link href="/kanban" className="text-[11px] transition-colors" style={{ color: "var(--gold)" }}>
-            View board →
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
-          {kanbanCols.map((col) => {
-            const colColor = STATUS_COLORS[col.status] ?? "var(--text3)";
-            return (
-              <Widget key={col.status} className="min-h-[80px]">
-                <div className="mb-2 flex items-center justify-between">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: colColor }}>
-                    {col.status}
-                  </p>
-                  <span
-                    className="rounded-full px-1.5 py-0.5 text-[9px] font-bold"
-                    style={{ background: `${colColor}22`, color: colColor }}
-                  >
-                    {col.orders.length}
-                  </span>
-                </div>
-                <div className="space-y-1.5">
-                  {col.orders.slice(0, 3).map((o) => {
-                    const isUrgent = o.priority === "Urgent" || o.priority === "Express";
-                    return (
-                      <div
-                        key={o.id}
-                        className="rounded-md border-l-2 px-2 py-1"
-                        style={{
-                          background: "var(--surface2)",
-                          borderLeftColor: isUrgent ? "var(--color-red)" : "var(--border)",
-                        }}
-                      >
-                        <p className="truncate text-[10px] font-medium leading-tight" style={{ color: "var(--text)" }}>
-                          {o.customerName}
-                        </p>
-                        <p className="text-[9px] leading-tight" style={{ color: "var(--text3)" }}>
-                          #{o.tokenNo}
-                        </p>
-                      </div>
-                    );
-                  })}
-                  {col.orders.length > 3 && (
-                    <p className="text-[9px]" style={{ color: "var(--text3)" }}>
-                      +{col.orders.length - 3} more
-                    </p>
-                  )}
-                </div>
-              </Widget>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Bottom grid: Recent Orders + right column */}
-      <div className="grid gap-4 xl:grid-cols-3">
+{/* Bottom grid: Recent Orders + right column */}
+<div className="grid gap-4 xl:grid-cols-3">
         {/* Recent Orders */}
         <div className="xl:col-span-2">
-          <div className="mb-3 flex items-center justify-between">
+          <div className="mb-0 px-2 flex items-center justify-between">
             <SectionTitle>Recent Orders</SectionTitle>
             <Link href="/orders" className="text-[11px]" style={{ color: "var(--gold)" }}>
               View all →
             </Link>
           </div>
-          <Widget className="overflow-hidden p-0">
+          <Widget className="overflow-hidden px-2 py-2">
             <div className="overflow-x-auto">
               <table className="w-full text-[11px]">
                 <thead>
@@ -372,7 +423,7 @@ export default function DashboardPage() {
                     {["Token", "Customer", "Due", "Status", "Balance"].map((h) => (
                       <th
                         key={h}
-                        className="px-4 py-2.5 text-left font-semibold uppercase tracking-wide"
+                        className="px-2 py-2.5 text-left font-semibold uppercase tracking-wide"
                         style={{ color: "var(--text3)", fontSize: "9px" }}
                       >
                         {h}
@@ -383,7 +434,7 @@ export default function DashboardPage() {
                 <tbody>
                   {recentOrders.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-4 py-6 text-center text-[11px]" style={{ color: "var(--text3)" }}>
+                      <td colSpan={5} className="px-2 py-6 text-center text-[11px]" style={{ color: "var(--text3)" }}>
                         No orders yet
                       </td>
                     </tr>
@@ -395,24 +446,29 @@ export default function DashboardPage() {
                           borderBottom: i < recentOrders.length - 1 ? "1px solid var(--border)" : undefined,
                         }}
                       >
-                        <td className="px-4 py-2.5">
-                          <span className="font-mono" style={{ color: "var(--gold)" }}>
+                        <td className="px-2 py-2.5">
+                          <Link
+                            href={`/orders/${o.id}`}
+                            className="font-mono font-semibold underline-offset-2 hover:underline"
+                            style={{ color: "var(--gold)" }}
+                            aria-label={`Open order #${o.tokenNo}`}
+                          >
                             #{o.tokenNo}
-                          </span>
+                          </Link>
                         </td>
-                        <td className="px-4 py-2.5" style={{ color: "var(--text)" }}>
+                        <td className="px-2 py-2.5" style={{ color: "var(--text)" }}>
                           {o.customerName}
                         </td>
-                        <td className="px-4 py-2.5" style={{ color: "var(--text2)" }}>
+                        <td className="px-2 py-2.5" style={{ color: "var(--text2)" }}>
                           {new Date(o.deliveryDate).toLocaleDateString("en-IN", {
                             day: "2-digit",
                             month: "short",
                           })}
                         </td>
-                        <td className="px-4 py-2.5">
+                        <td className="px-2 py-2.5">
                           <StatusPill status={o.status} />
                         </td>
-                        <td className="px-4 py-2.5">
+                        <td className="px-2 py-2.5">
                           <BalancePill balance={o.balanceAmount} />
                         </td>
                       </tr>
@@ -426,68 +482,12 @@ export default function DashboardPage() {
 
         {/* Right column: Tailors + Udhar */}
         <div className="space-y-4">
-          {/* Tailor Workload */}
-          <div>
-            <div className="mb-3 flex items-center justify-between">
-              <SectionTitle>Tailor Workload</SectionTitle>
-              <Link href="/tailors" className="text-[11px]" style={{ color: "var(--gold)" }}>
-                Manage →
-              </Link>
-            </div>
-            <Widget>
-              {activeTailors.length === 0 ? (
-                <p className="text-[11px]" style={{ color: "var(--text3)" }}>
-                  No tailors yet
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  {activeTailors.map((t) => {
-                    /* Count kanban jobs for this tailor (placeholder: random 1-8) */
-                    const pending = Math.min(
-                      Math.floor(Math.random() * 8) + 1,
-                      8
-                    );
-                    const pct = Math.round((pending / 8) * 100);
-                    const barColor = pct >= 75 ? "var(--color-red)" : pct >= 50 ? "var(--gold)" : "var(--color-green)";
-                    return (
-                      <div key={t.id}>
-                        <div className="mb-1 flex items-center justify-between">
-                          <div className="flex items-center gap-1.5">
-                            <div
-                              className="flex h-5 w-5 items-center justify-center rounded-full text-[9px] font-semibold"
-                              style={{ background: "var(--gold-dim)", color: "var(--gold)" }}
-                            >
-                              {t.name[0]}
-                            </div>
-                            <p className="text-[11px] font-medium" style={{ color: "var(--text)" }}>
-                              {t.name}
-                            </p>
-                          </div>
-                          <p className="text-[9px]" style={{ color: "var(--text3)" }}>
-                            {pending} jobs
-                          </p>
-                        </div>
-                        <div className="h-1 w-full overflow-hidden rounded-full" style={{ background: "var(--surface2)" }}>
-                          <div
-                            className="h-full rounded-full transition-all"
-                            style={{ width: `${pct}%`, background: barColor }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-              <p className="mt-3 text-[9px]" style={{ color: "var(--text3)" }}>
-                * Live workload from Job Cards coming soon
-              </p>
-            </Widget>
-          </div>
+          
 
           {/* Udhar Top 5 */}
-          <div>
-            <div className="mb-3 flex items-center justify-between">
-              <SectionTitle>Udhar Khata</SectionTitle>
+          {/* <div>
+            <div className="mb-0 flex items-center justify-between">
+              <SectionTitle>Ledger Book</SectionTitle>
               <Link href="/udhar" className="text-[11px]" style={{ color: "var(--gold)" }}>
                 Full ledger →
               </Link>
@@ -530,9 +530,64 @@ export default function DashboardPage() {
                 </Link>
               )}
             </Widget>
+          </div> */}
+          {/* Tailor Workload */}
+          <div>
+            <div className="mb-0 px-2 flex items-center justify-between">
+              <SectionTitle>Tailor Workload</SectionTitle>
+              <Link href="/jobs-card" className="text-[11px]" style={{ color: "var(--gold)" }}>
+                Manage →
+              </Link>
+            </div>
+            <Widget>
+              {activeTailors.length === 0 ? (
+                <p className="text-[11px]" style={{ color: "var(--text3)" }}>
+                  No tailors yet
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {activeTailors.map((t) => {
+                    debugger;
+                    const w = workloadMap.get(t.id);
+                    const pending = w?.activeOrderCount ?? 0;
+                    const itemsQty = w?.activeItemQty ?? 0;
+                    const pct = Math.round((pending / maxOrders) * 100);
+                    const barColor = pct >= 75 ? "var(--color-red)" : pct >= 50 ? "var(--gold)" : "var(--color-green)";
+                    return (
+                      <div key={t.id}>
+                        <div className="mb-1 flex items-center justify-between">
+                          <div className="flex items-center gap-1.5">
+                            <div
+                              className="flex h-5 w-5 items-center justify-center rounded-full text-[9px] font-semibold"
+                              style={{ background: "var(--gold-dim)", color: "var(--gold)" }}
+                            >
+                              {t.name[0]}
+                            </div>
+                            <p className="text-[11px] font-medium" style={{ color: "var(--text)" }}>
+                              {t.name}
+                            </p>
+                          </div>
+                          <p className="text-[9px]" style={{ color: "var(--text3)" }}>
+                            {pending} orders · {itemsQty} pcs
+                          </p>
+                        </div>
+                        <div className="h-1 w-full overflow-hidden rounded-full" style={{ background: "var(--surface2)" }}>
+                          <div
+                            className="h-full rounded-full transition-all"
+                            style={{ width: `${pct}%`, background: barColor }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}             
+            </Widget>
           </div>
         </div>
       </div>
+
+      {/* Quick Actions removed (header already provides primary actions) */}
     </div>
   );
 }

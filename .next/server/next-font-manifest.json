@@ -8,6 +8,26 @@
       "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
       "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
     ],
+    "[project]/app/(dashboard)/accounts/ledger/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/accounts/outstanding/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/accounts/payments/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/accounts/receipts/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/accounts/transaction-book/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
     "[project]/app/(dashboard)/alterations/page": [
       "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
       "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
@@ -40,7 +60,7 @@
       "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
       "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
     ],
-    "[project]/app/(dashboard)/jobs/page": [
+    "[project]/app/(dashboard)/jobs-card/page": [
       "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
       "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
     ],
@@ -49,6 +69,10 @@
       "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
     ],
     "[project]/app/(dashboard)/measurements/page": [
+      "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
+      "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
+    ],
+    "[project]/app/(dashboard)/orders/[id]/edit/page": [
       "static/media/5c285b27cdda1fe8-s.p.0yo6-5yoeeudq.woff2",
       "static/media/15e5804ec144eae0-s.p.0prh.t87rj-xc.woff2"
     ],

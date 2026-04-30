@@ -4,6 +4,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth-store";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Eye, EyeOff, Loader2, Lock, Phone, Scissors } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

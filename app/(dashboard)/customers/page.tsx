@@ -28,6 +28,8 @@ const EMPTY_FORM = { name: "", phone: "", alternatePhone: "", address: "", city:
 export default function CustomersPage() {
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
   const [panelOpen, setPanelOpen] = useState(false);
   const [editing, setEditing] = useState<CustomerDto | null>(null);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -44,13 +46,17 @@ export default function CustomersPage() {
     return () => clearTimeout(timer);
   }, [search]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch]);
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ["customers", debouncedSearch],
+    queryKey: ["customers", debouncedSearch, page, pageSize],
     queryFn: async () => {
       const res = await api.get("/api/customers", {
-        params: { search: debouncedSearch || undefined, page: 1, pageSize: 60 },
+        params: { search: debouncedSearch || undefined, page, pageSize },
       });
-      return res.data.items as CustomerDto[];
+      return res.data as { items: CustomerDto[]; totalCount: number; page: number; pageSize: number };
     },
     staleTime: 30_000,   // don't refetch if data is < 30 s old
     retry: 1,
@@ -96,7 +102,9 @@ export default function CustomersPage() {
     setPanelOpen(true);
   }
 
-  const customers = data ?? [];
+  const customers = data?.items ?? [];
+  const totalCount = data?.totalCount ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
   const withUdhar = customers.filter((c) => c.udharBalance > 0).length;
 
   return (
@@ -112,7 +120,7 @@ export default function CustomersPage() {
             className="pl-9"
           />
         </div>
-        <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid var(--border)" }}>
+        {/* <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid var(--border)" }}>
           {(["table", "grid"] as const).map((m) => (
             <button
               key={m}
@@ -128,12 +136,12 @@ export default function CustomersPage() {
               {m === "table" ? "Table" : "Grid"}
             </button>
           ))}
-        </div>
+        </div> */}
         <StyledButton onClick={openAdd}>
           <Plus size={12} strokeWidth={2.5} />
           Add customer
         </StyledButton>
-        {withUdhar > 0 && (
+        {/* {withUdhar > 0 && (
           <Link
             href="/udhar"
             className="flex items-center gap-1 rounded-lg px-3 py-2 text-[11px] font-medium"
@@ -142,7 +150,7 @@ export default function CustomersPage() {
             <AlertCircle size={11} />
             {withUdhar} with udhar
           </Link>
-        )}
+        )} */}
       </div>
 
       {/* Error / summary row */}
@@ -155,9 +163,7 @@ export default function CustomersPage() {
           </p>
         </div>
       )}
-      <p className="text-[11px]" style={{ color: "var(--text3)" }}>
-        {isLoading ? "Loading…" : `${customers.length} customer${customers.length !== 1 ? "s" : ""}${search ? " found" : ""}`}
-      </p>
+      
 
       {/* Grid */}
       {!isLoading && customers.length === 0 && (
@@ -332,7 +338,26 @@ export default function CustomersPage() {
           ))}
         </div>
       )}
+      
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-[11px]" style={{ color: "var(--text3)" }}>
+        {isLoading
+          ? "Loading…"
+          : `${totalCount} customer${totalCount !== 1 ? "s" : ""}${search ? " found" : ""} · page ${page} / ${totalPages}`}
+      </p>
+          <div className="flex items-center gap-2">
+            <StyledButton type="button" variant="ghost" disabled={page <= 1 || isLoading} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+              Previous
+            </StyledButton>
+            <StyledButton type="button" variant="ghost" disabled={page >= totalPages || isLoading} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
+              Next
+            </StyledButton>
+          </div>
+        </div>
+      )}
       {/* Delete confirmation dialog */}
       {deleteTarget && (
         <div
@@ -379,7 +404,7 @@ export default function CustomersPage() {
         >
           <FormField label="Full name" required>
             <StyledInput
-              placeholder="e.g. Priya Sharma"
+              placeholder="e.g. Raja Kumar"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               required
@@ -389,7 +414,7 @@ export default function CustomersPage() {
           <FormField label="Phone number" required>
             <StyledInput
               type="tel"
-              placeholder="10-digit mobile"
+              placeholder="Mobile number / WhatsApp number"
               value={form.phone}
               onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
               required
@@ -408,7 +433,7 @@ export default function CustomersPage() {
           <div className="grid grid-cols-2 gap-3">
             <FormField label="City">
               <StyledInput
-                placeholder="e.g. Jaipur"
+                placeholder="e.g. Surat"
                 value={form.city}
                 onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
               />
