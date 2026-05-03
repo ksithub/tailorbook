@@ -19,6 +19,18 @@ export function SlidePanel({ open, onClose, title, subtitle, children, width = "
     return () => document.removeEventListener("keydown", handler);
   }, [open, onClose]);
 
+  // Narrow phones are often < 420px wide; a fixed panel width clips the left edge. Cap width at viewport.
+  const panelWidth = `min(100vw, ${width})`;
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   return (
     <>
       {/* Backdrop */}
@@ -26,18 +38,27 @@ export function SlidePanel({ open, onClose, title, subtitle, children, width = "
         className={`fixed inset-0 z-40 transition-opacity duration-200 ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
         style={{ background: "rgba(0,0,0,0.55)", marginTop: "0rem" }}
         onClick={onClose}
+        aria-hidden={!open}
       />
       {/* Panel */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 flex flex-col transition-transform duration-200 ${open ? "translate-x-0" : "translate-x-full"}`}
-        style={{ width, background: "var(--surface)", borderLeft: "1px solid var(--border)", marginTop: "0rem" }}
+        className={`fixed inset-y-0 right-0 z-50 box-border flex max-w-[100vw] min-w-0 flex-col transition-transform duration-200 ${open ? "translate-x-0" : "translate-x-full"}`}
+        style={{
+          width: panelWidth,
+          background: "var(--surface)",
+          borderLeft: "1px solid var(--border)",
+          marginTop: "0rem",
+          paddingRight: "env(safe-area-inset-right, 0px)",
+        }}
+        role="dialog"
+        aria-modal="true"
       >
         {/* Header */}
         <div
-          className="flex flex-shrink-0 items-start justify-between px-6 py-5"
+          className="flex min-w-0 flex-shrink-0 items-start justify-between gap-3 px-4 py-4 sm:px-6 sm:py-5"
           style={{ borderBottom: "1px solid var(--border)" }}
         >
-          <div>
+          <div className="min-w-0 flex-1">
             <h2 className="text-[15px] font-semibold leading-none" style={{ color: "var(--text)" }}>
               {title}
             </h2>
@@ -59,7 +80,7 @@ export function SlidePanel({ open, onClose, title, subtitle, children, width = "
           </button>
         </div>
         {/* Scrollable body */}
-        <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
+        <div className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">{children}</div>
       </div>
     </>
   );
