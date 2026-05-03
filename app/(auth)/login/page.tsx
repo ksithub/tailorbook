@@ -26,9 +26,12 @@ export default function LoginPage() {
       return;
     }
     function finish() {
-      const t = useAuthStore.getState().accessToken ?? localStorage.getItem("tb_access");
-      if (t) router.replace("/dashboard");
-      else setSessionChecked(true);
+      if (localStorage.getItem("tb_access")) {
+        router.replace("/dashboard");
+        return;
+      }
+      if (useAuthStore.getState().accessToken) useAuthStore.getState().logout();
+      setSessionChecked(true);
     }
     if (useAuthStore.persist.hasHydrated()) {
       finish();

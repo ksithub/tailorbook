@@ -47,13 +47,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [authGate, setAuthGate] = useState<"checking" | "authed" | "anon">("checking");
 
   const applyAuth = useCallback(() => {
-    const t = useAuthStore.getState().accessToken ?? localStorage.getItem("tb_access");
-    if (!t) {
-      router.replace("/login");
-      setAuthGate("anon");
-    } else {
+    // Axios only sends `tb_access`; treat it as source of truth. A stale zustand token alone
+    // (e.g. after 401 cleared localStorage keys) caused /login ↔ /dashboard reload loops in prod.
+    const tb = localStorage.getItem("tb_access");
+    if (tb) {
       setAuthGate("authed");
+      return;
     }
+    if (useAuthStore.getState().accessToken) useAuthStore.getState().logout();
+    router.replace("/login");
+    setAuthGate("anon");
   }, [router]);
 
   useLayoutEffect(() => {
@@ -76,8 +79,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     if (authGate !== "authed") return;
-    const t = useAuthStore.getState().accessToken ?? localStorage.getItem("tb_access");
-    if (!t) {
+    if (!localStorage.getItem("tb_access")) {
+      useAuthStore.getState().logout();
       router.replace("/login");
       setAuthGate("anon");
     }
