@@ -167,13 +167,13 @@ export default function DashboardPage() {
     queryFn: async () => (await api.get("/api/tailors")).data,
     staleTime: 60_000,
   });
-debugger;
+
   const { data: tailorWorkload } = useQuery<TailorWorkloadDto[]>({
     queryKey: ["tailor-workload"],
     queryFn: async () => (await api.get("/api/tailors/workload")).data,
     staleTime: 30_000,
   });
-debugger;
+
   const { data: udharList } = useQuery<CustomerDto[]>({
     queryKey: ["udhar-list"],
     queryFn: async () => (await api.get("/api/udhar")).data,
@@ -288,9 +288,9 @@ debugger;
                 <div className="space-y-1.5">
                   {col.orders.slice(0, 3).map((o) => {
                     const isUrgent = o.priority === "Urgent" || o.priority === "Express";
-                    const dueLabel = new Date(o.deliveryDate).toLocaleDateString("en-IN", {
+                    const orderDate = new Date(o.orderDate).toLocaleDateString("en-IN", {
                       day: "2-digit",
-                      month: "short",
+                      month: "2-digit",
                     });
                     return (
                       <Link
@@ -312,7 +312,7 @@ debugger;
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
                             <p className="truncate text-[10px] font-semibold leading-tight" style={{ color: "var(--text)" }}>
-                              #{o.tokenNo} <span style={{ color: "var(--text3)", fontWeight: 500 }}>· {dueLabel}</span>
+                              #{o.tokenNo} <span style={{ color: "var(--text3)", fontWeight: 500 }}>· {orderDate}</span>
                             </p>
                             <p className="truncate text-[10px] font-medium leading-tight" style={{ color: "var(--text2)" }}>
                               {o.customerName} - {o.customerPhone}
@@ -547,7 +547,7 @@ debugger;
               ) : (
                 <div className="space-y-3">
                   {activeTailors.map((t) => {
-                    debugger;
+                    
                     const w = workloadMap.get(t.id);
                     const pending = w?.activeOrderCount ?? 0;
                     const itemsQty = w?.activeItemQty ?? 0;

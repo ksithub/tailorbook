@@ -3,10 +3,10 @@
 import { SidebarNav } from "@/components/layout/SidebarNav";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useAuthStore } from "@/stores/auth-store";
-import { LogOut, Menu, Plus, Scissors, X } from "lucide-react";
+import { Loader2, LogOut, Menu, Plus, Scissors, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 
 function getPageTitle(pathname: string): { title: string; subtitle: string } {
   const map: Record<string, { title: string; subtitle: string }> = {
@@ -43,17 +43,66 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const { user, logout, accessToken } = useAuthStore();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  /** Avoid flashing dashboard before we know the session (token is client-only + zustand may rehydrate async). */
+  const [authGate, setAuthGate] = useState<"checking" | "authed" | "anon">("checking");
+
+  const applyAuth = useCallback(() => {
+    const t = useAuthStore.getState().accessToken ?? localStorage.getItem("tb_access");
+    if (!t) {
+      router.replace("/login");
+      setAuthGate("anon");
+    } else {
+      setAuthGate("authed");
+    }
+  }, [router]);
+
+  useLayoutEffect(() => {
+    if (typeof window === "undefined") return;
+    // Fast path: axios uses tb_access in localStorage
+    if (localStorage.getItem("tb_access")) {
+      setAuthGate("authed");
+      return;
+    }
+    // Wait for persisted auth (may be the only copy if tb_access was never written)
+    if (useAuthStore.persist.hasHydrated()) {
+      applyAuth();
+      return;
+    }
+    const unsub = useAuthStore.persist.onFinishHydration(() => {
+      applyAuth();
+    });
+    return unsub;
+  }, [applyAuth]);
 
   useEffect(() => {
-    const t = accessToken ?? (typeof window !== "undefined" ? localStorage.getItem("tb_access") : null);
-    if (!t) router.replace("/login");
-  }, [accessToken, router]);
+    if (authGate !== "authed") return;
+    const t = useAuthStore.getState().accessToken ?? localStorage.getItem("tb_access");
+    if (!t) {
+      router.replace("/login");
+      setAuthGate("anon");
+    }
+  }, [accessToken, authGate, router]);
 
   useEffect(() => {
     setDrawerOpen(false);
   }, [pathname]);
 
   const { title, subtitle } = getPageTitle(pathname);
+
+  if (authGate !== "authed") {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3" style={{ background: "var(--bg)" }}>
+        {authGate === "checking" && (
+          <>
+            <Loader2 size={22} className="animate-spin" style={{ color: "var(--gold)" }} aria-hidden />
+            <p className="text-[12px]" style={{ color: "var(--text3)" }}>
+              Loading…
+            </p>
+          </>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen" style={{ background: "var(--bg)" }}>

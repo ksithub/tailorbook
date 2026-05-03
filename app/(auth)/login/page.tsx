@@ -7,16 +7,36 @@ import { Eye, EyeOff, Loader2, Lock, Phone, Scissors } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
   const setAuth = useAuthStore((s) => s.setAuth);
+  const [sessionChecked, setSessionChecked] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useLayoutEffect(() => {
+    if (typeof window === "undefined") return;
+    if (localStorage.getItem("tb_access")) {
+      router.replace("/dashboard");
+      return;
+    }
+    function finish() {
+      const t = useAuthStore.getState().accessToken ?? localStorage.getItem("tb_access");
+      if (t) router.replace("/dashboard");
+      else setSessionChecked(true);
+    }
+    if (useAuthStore.persist.hasHydrated()) {
+      finish();
+      return;
+    }
+    const unsub = useAuthStore.persist.onFinishHydration(() => finish());
+    return unsub;
+  }, [router]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -32,6 +52,17 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (!sessionChecked) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3" style={{ background: "var(--bg)" }}>
+        <Loader2 size={22} className="animate-spin" style={{ color: "var(--gold)" }} aria-hidden />
+        <p className="text-[12px]" style={{ color: "var(--text3)" }}>
+          Loading…
+        </p>
+      </div>
+    );
   }
 
   return (
