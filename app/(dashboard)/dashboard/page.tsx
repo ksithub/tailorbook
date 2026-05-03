@@ -29,6 +29,7 @@ type OrderListDto = {
   tokenNo: string;
   customerName: string;
   customerPhone: string;
+  orderDate: string;
   deliveryDate: string;
   status: string;
   balanceAmount: number;
